@@ -10,7 +10,7 @@ local error_messages = require("easy-dotnet.error-messages")
 ---
 ---This is a wrapper around `term(path, "run", args)`.
 ---
----@param project DotnetProject: The full path to the Dotnet project.
+---@param project easy-dotnet.project.Project: The full path to the Dotnet project.
 ---@param args string: Additional arguments to pass to `dotnet watch`.
 ---@param term function: terminal callback
 local function watch_project(project, args, term)

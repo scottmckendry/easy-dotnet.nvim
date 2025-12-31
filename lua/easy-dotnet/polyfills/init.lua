@@ -76,7 +76,7 @@ function M.tbl_filter(func, t)
   return rettab
 end
 
---- @class M.tbl_contains.Opts
+--- @class easy-dotnet.polyfill.TblContainsOptions
 --- @inlinedoc
 ---
 --- `value` is a function reference to be checked (default false)

@@ -6,10 +6,10 @@ local M = {}
 
 local active_server_finish_callbacks = {}
 
----@param client DotnetClient
+---@param client easy-dotnet.Client
 local function nuget_restore_handler(client, target_path) client.nuget:nuget_restore(target_path) end
 
----@param client DotnetClient
+---@param client easy-dotnet.Client
 M.handler = function(client, method, params)
   coroutine.wrap(function()
     if method == "$/progress" then

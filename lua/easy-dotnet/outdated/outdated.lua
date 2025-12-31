@@ -3,7 +3,7 @@ local constants = require("easy-dotnet.constants")
 local logger = require("easy-dotnet.logger")
 local M = {}
 
----@alias PatternType "reference" | "version"
+---@alias easy-dotnet.outdated.PatternType "reference" | "version"
 
 ---@param package_name string # The name of the package to search for.
 ---@param pattern_type PatternType # The pattern type to use ("reference" or "version").
@@ -35,7 +35,7 @@ local function find_package_in_buffer(package_name, pattern_type)
   return nil
 end
 
----@param deps OutdatedPackage[]
+---@param deps easy-dotnet.nuget.OutdatedPackage[]
 ---@param pattern_type PatternType
 local function apply_ext_marks(deps, pattern_type)
   local ns_id = constants.ns_id

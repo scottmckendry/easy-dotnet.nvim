@@ -69,20 +69,20 @@
 --- @diagnostic disable:no-unknown
 
 ---@nodoc
----@class IterMod
+---@class easy-dotnet.polyfill.IterModule
 ---@operator call:Iter
 
 local M = {}
 
 ---@nodoc
----@class Iter
+---@class easy-dotnet.polyfill.Iter
 local Iter = {}
 Iter.__index = Iter
 Iter.__call = function(self) return self:next() end
 
 --- Special case implementations for iterators on list tables.
 ---@nodoc
----@class ArrayIter : Iter
+---@class easy-dotnet.polyfill.ArrayIter : Iter
 ---@field _table table Underlying table data
 ---@field _head number Index to the front of a table iterator
 ---@field _tail number Index to the end of a table iterator (exclusive)

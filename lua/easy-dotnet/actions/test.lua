@@ -16,7 +16,7 @@ local pick_project_without_solution = function()
   local project_framework = picker.pick_sync(nil, project.get_all_runtime_definitions(), "Run project")
   return project_framework
 end
----Prompts the user to select a testable DotnetProject (with framework),
+---Prompts the user to select a testable easy-dotnet.project.Project (with framework),
 ---optionally using a default if configured and allowed.
 ---
 ---This function looks for a solution file, checks if a default testable project
@@ -27,7 +27,7 @@ end
 ---If a project is selected, the default is updated for future invocations.
 ---
 ---@param use_default boolean: If true, allows using the stored default project if available.
----@return DotnetProject | nil: The selected or default DotnetProject.
+---@return easy-dotnet.project.Project | nil: The selected or default easy-dotnet.project.Project.
 ---@return string|nil: The path to the solution file, or nil if no solution is used.
 local function pick_project_framework_or_solution(use_default)
   local default_manager = require("easy-dotnet.default-manager")
@@ -45,7 +45,7 @@ local function pick_project_framework_or_solution(use_default)
   table.insert(projects_with_sln, { display = "Solution" })
 
   if #projects_with_sln == 0 then error(error_messages.no_test_projects_found) end
-  ---@type DotnetProject
+  ---@type easy-dotnet.project.Project
   local project_framework = picker.pick_sync(nil, projects_with_sln, "Test project")
   if not project_framework then
     logger.error("No project selected")
@@ -88,7 +88,7 @@ end
 ---
 ---This is a wrapper around `term(path, "test", args)`.
 ---
----@param project DotnetProject: The full path to the Dotnet project.
+---@param project easy-dotnet.project.Project: The full path to the Dotnet project.
 ---@param args string: Additional arguments to pass to `dotnet test`.
 ---@param term function: terminal callback
 local function test_project(project, args, term)

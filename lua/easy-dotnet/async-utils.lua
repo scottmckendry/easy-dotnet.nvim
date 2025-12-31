@@ -1,5 +1,5 @@
 local M = {}
----@alias JobCallback fun(stdout: string[], stderr: string[], exit_code: number)
+---@alias easy-dotnet.async.JobCallback fun(stdout: string[], stderr: string[], exit_code: number)
 
 --- Runs a command asynchronously using `vim.fn.jobstart`.
 --- @param cmd string[] Command and its arguments.

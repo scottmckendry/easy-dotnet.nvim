@@ -3,7 +3,7 @@ local logger = require("easy-dotnet.logger")
 ---@type table<string,Command>
 local M = {}
 
----@class Command
+---@class easy-dotnet.Command
 ---@field subcommands table<string,Command> | nil
 ---@field handle nil | fun(args: table<string>|string, options: table): nil
 ---@field passthrough boolean | nil

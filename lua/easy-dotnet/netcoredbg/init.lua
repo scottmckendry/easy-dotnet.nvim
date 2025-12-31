@@ -1,11 +1,11 @@
----@class Variable
+---@class easy-dotnet.debugger.Variable
 ---@field name string The variable's name.
 ---@field value string A one-line or multi-line string representing the variable.
 ---@field type? string The type of the variable, shown in the UI on hover.
 ---@field variablesReference integer Reference ID for child variables (0 = none).
 ---@field children? table<Variable>
 
----@class ResolvedVariable
+---@class easy-dotnet.debugger.ResolvedVariable
 ---@field formatted_value string
 ---@field value table | string
 ---@field type string

@@ -1,3 +1,3 @@
----@class CommandContext
+---@class easy-dotnet.roslyn.lsp.CommandContext
 ---@field client_id integer LSP client id
 ---@field bufnr integer buffer number

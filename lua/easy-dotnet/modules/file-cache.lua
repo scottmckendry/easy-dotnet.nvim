@@ -1,7 +1,7 @@
 local logger = require("easy-dotnet.logger")
 local M = {}
 
---- @class FileCacheEntry
+--- @class easy-dotnet.cache.Entry
 --- @field mtime integer # Last known modification time (in seconds)
 --- @field value any     # Cached value
 

@@ -1,4 +1,4 @@
----@class Spinner
+---@class easy-dotnet.ui.Spinner
 local M = {}
 M.__index = M
 
@@ -11,9 +11,9 @@ M.spinner_presets = {
 }
 
 ---Creates a new spinner instance.
----@return Spinner
+---@return easy-dotnet.ui.Spinner
 function M.new()
-  ---@class Spinner
+  ---@class easy-dotnet.ui.Spinner
   local self = setmetatable({}, M)
   self.spinner_symbols = M.spinner_presets.default ---@type string[] The current spinner symbols
   self.spinner_index = 1 ---@type integer Current index of the spinner symbol

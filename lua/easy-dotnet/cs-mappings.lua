@@ -8,7 +8,7 @@ local function is_buffer_empty(buf)
   return true
 end
 
----@alias BootstrapNamespaceMode "file_scoped" | "block_scoped"
+---@alias easy-dotnet.template.BootstrapNamespaceMode "file_scoped" | "block_scoped"
 
 local function is_key_value_table(tbl)
   if type(tbl) ~= "table" then return false end

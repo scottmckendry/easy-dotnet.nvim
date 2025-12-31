@@ -3,7 +3,7 @@ local client = require("easy-dotnet.rpc.rpc").global_rpc_client
 local logger = require("easy-dotnet.logger")
 local M = {}
 
----@class MsbuildProperties
+---@class easy-dotnet.project.MsbuildProperties
 ---@field outputPath string | nil Normalized path to the build output directory (e.g., "bin/Debug/net9.0/")
 ---@field outputType string | nil Type of output, typically "Exe" or "Library"
 ---@field targetExt string | nil File extension of the built output (e.g., ".dll")
@@ -31,7 +31,7 @@ local M = {}
 ---@field buildCommand string
 ---@field testCommand string
 
----@class DotnetProject
+---@class easy-dotnet.project.Project
 ---@field language "csharp" | "fsharp"
 ---@field display string
 ---@field path string
@@ -47,16 +47,16 @@ local M = {}
 ---@field isWebProject boolean
 ---@field isWorkerProject boolean
 ---@field isWinProject boolean
----@field msbuild_props MsbuildProperties
----@field get_specific_runtime_definition fun(target_framework: string): DotnetProject
----@field get_all_runtime_definitions fun(): DotnetProject[]
+---@field msbuild_props easy-dotnet.project.MsbuildProperties
+---@field get_specific_runtime_definition fun(target_framework: string): easy-dotnet.project.Project
+---@field get_all_runtime_definitions fun(): easy-dotnet.project.Project[]
 ---@field type 'project' | 'project_framework'
 
----@class DotnetProjectFramework
+---@class easy-dotnet.project.Framework
 ---@field display string
 ---@field version string
 ---@field type 'project_framework'
----@field msbuild_props MsbuildProperties
+---@field msbuild_props easy-dotnet.project.MsbuildProperties
 ---@field get_dll_path function
 
 --- Extracts a pattern from an array of lines
@@ -85,7 +85,7 @@ M.get_project_references_from_projects = function(project_path)
   return coroutine.yield()
 end
 
----@type table<string, MsbuildProperties | {pending: true, waiters: fun(MsbuildProperties)[]}>
+---@type table<string, easy-dotnet.project.MsbuildProperties | {pending: true, waiters: fun(easy-dotnet.project.MsbuildProperties)[]}>
 local msbuild_cache = {}
 
 ---@param project_file_path string
@@ -95,7 +95,7 @@ local function build_cache_key(project_file_path, target_framework) return targe
 --- Build and cache MSBuild properties for a project file
 ---@param project_file_path string
 ---@param target_framework string | nil which target framework to query for e.g 'net9.0'
----@param on_finished fun(props: MsbuildProperties)? optional callback
+---@param on_finished fun(props: easy-dotnet.project.MsbuildProperties)? optional callback
 function M.preload_msbuild_properties(project_file_path, on_finished, target_framework)
   assert(project_file_path, "Project file path cannot be nil")
   local cache_key = build_cache_key(project_file_path, target_framework)
@@ -142,7 +142,7 @@ end
 --- Coroutine-friendly get: yields until properties are available
 ---@param project_file_path string
 ---@param target_framework string|nil
----@return MsbuildProperties
+---@return easy-dotnet.project.MsbuildProperties
 function M.get_or_wait_or_set_cached_value(project_file_path, target_framework)
   local cache_key = build_cache_key(project_file_path, target_framework)
   local cached = msbuild_cache[cache_key]
@@ -165,7 +165,7 @@ end
 
 -- Get the project definition from a csproj/fsproj file
 ---@param project_file_path string
----@return DotnetProject
+---@return easy-dotnet.project.Project
 M.get_project_from_project_file = function(project_file_path)
   local result = file_cache.get(project_file_path, function(lines)
     local msbuild_props = M.get_or_wait_or_set_cached_value(project_file_path)
@@ -198,7 +198,7 @@ M.get_project_from_project_file = function(project_file_path)
     if is_worker_project then display = display .. " " end
     if is_win_project then display = display .. " " end
 
-    ---@type DotnetProject
+    ---@type easy-dotnet.project.Project
     local project = {
       display = display,
       path = project_file_path,
@@ -227,20 +227,20 @@ M.get_project_from_project_file = function(project_file_path)
     }
 
     ---@param target_framework string specified as e.g net8.0
-    ---@return DotnetProjectFramework
+    ---@return easy-dotnet.project.Framework
     project.get_specific_runtime_definition = function(target_framework)
       if not project.msbuild_props.isMultiTarget then return project end
       --TODO: validate that arg is a valid targetFramework on the project
       local msbuild_target_framework_props = M.get_or_wait_or_set_cached_value(project_file_path, target_framework)
       local runtime_version = target_framework:gsub("%net", "")
-      ---@type DotnetProjectFramework
+      ---@type easy-dotnet.project.Framework
       local project_framework = {
         display = project.display .. "@" .. runtime_version,
         get_dll_path = function() return msbuild_target_framework_props.targetPath end,
         version = msbuild_target_framework_props.version,
         dll_path = msbuild_target_framework_props.targetPath,
         type = "project_framework",
-        ---@type MsbuildProperties
+        ---@type easy-dotnet.project.MsbuildProperties
         msbuild_props = {
           targetFramework = target_framework,
         },

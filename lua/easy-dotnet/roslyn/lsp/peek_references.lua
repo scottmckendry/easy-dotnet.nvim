@@ -1,8 +1,8 @@
----@class ReferenceRange
+---@class easy-dotnet.roslyn.lsp.ReferenceRange
 ---@field start { line: number, character: number }
 ---@field end { line: number, character: number }
 
----@class ReferenceItem
+---@class easy-dotnet.roslyn.lsp.ReferenceItem
 ---@field filename string The full path to the file
 ---@field line number The 1-indexed line number
 ---@field preview string The text preview of the line

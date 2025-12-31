@@ -1,23 +1,23 @@
----@class TemplateEngineClient
----@field _client StreamJsonRpc
----@field template_list fun(self: TemplateEngineClient, cb?: fun(variables: DotnetNewTemplate[]), opts?: RPC_CallOpts): RPC_CallHandle
----@field template_parameters fun(self: TemplateEngineClient, identity: string, cb?: fun(variables: DotnetNewParameter[]), opts?: RPC_CallOpts): RPC_CallHandle
----@field template_instantiate fun(self: TemplateEngineClient, identity: string, name: string, output_path: string, params: table<string,string>, cb?: fun(), opts?: RPC_CallOpts): RPC_CallHandle
+---@class easy-dotnet.template.Client
+---@field _client easy-dotnet.rpc.Client
+---@field template_list fun(self: easy-dotnet.template.Client, cb?: fun(variables: easy-dotnet.template.Template[]), opts?: easy-dotnet.rpc.GenericCallOptions): easy-dotnet.rpc.CallHandle
+---@field template_parameters fun(self: easy-dotnet.template.Client, identity: string, cb?: fun(variables: easy-dotnet.template.Parameter[]), opts?: easy-dotnet.rpc.GenericCallOptions): easy-dotnet.rpc.CallHandle
+---@field template_instantiate fun(self: easy-dotnet.template.Client, identity: string, name: string, output_path: string, params: table<string,string>, cb?: fun(), opts?: easy-dotnet.rpc.GenericCallOptions): easy-dotnet.rpc.CallHandle
 
----@type TemplateEngineClient
+---@type easy-dotnet.template.Client
 local M = {}
 M.__index = M
 
 --- Constructor
----@param client StreamJsonRpc
----@return TemplateEngineClient
+---@param client easy-dotnet.rpc.Client
+---@return easy-dotnet.template.Client
 function M.new(client)
   local self = setmetatable({}, M)
   self._client = client
   return self
 end
 
----@class DotnetNewTemplate
+---@class easy-dotnet.template.Template
 ---@field displayName string
 ---@field identity string
 ---@field type string|nil
@@ -35,17 +35,17 @@ function M:template_list(cb, opts)
   })()
 end
 
----@alias DotnetNewParameterDataType
+---@alias easy-dotnet.template.ParameterDataType
 ---| '"text"'
 ---| '"bool"'
 ---| '"choice"'
 ---| '"string"'
 
----@class DotnetNewParameter
+---@class easy-dotnet.template.Parameter
 ---@field name string
 ---@field defaultValue string|nil
 ---@field defaultIfOptionWithoutValue string|nil
----@field dataType DotnetNewParameterDataType
+---@field dataType easy-dotnet.template.ParameterDataType
 ---@field description string|nil
 ---@field isRequired boolean
 ---@field choices table<string, string>|nil

@@ -58,44 +58,7 @@ local function debug_test_from_buffer()
       return
     end
   end)
-end
-
-local function get_nearest_method_line()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local cursor = vim.api.nvim_win_get_cursor(0)
-  local row, col = cursor[1] - 1, cursor[2]
-
-  local parser = vim.treesitter.get_parser(bufnr)
-  if not parser then return nil end
-  local tree = parser:parse()[1]
-  local root = tree:root()
-
-  local node = root:named_descendant_for_range(row, col, row, col)
-
-  while node do
-    if node:type() == "method_declaration" then
-      local name_node = node:field("name")[1]
-      if name_node then
-        local start_row = name_node:start()
-        return start_row + 1
-      end
-    end
-    node = node:parent()
-  end
-end
-
-local function run_test_from_buffer()
-  local bufnr = vim.api.nvim_get_current_buf()
-  local curr_file = vim.api.nvim_buf_get_name(bufnr)
-  local requires_rebuild = get_buf_mtime() ~= get_mtime(curr_file)
-
-  local handlers = {}
-
-  ---@param node TestNode
-  require("easy-dotnet.test-runner.render").traverse(nil, function(node)
-    if (node.type == "test" or node.type == "test_group") and compare_paths(node.file_path, curr_file) then table.insert(handlers, node) end
-  end)
-  ---@type TestNode
+  ---@type easy-dotnet.test.runner.Node
   local first_node = handlers[1]
 
   if requires_rebuild and first_node then
@@ -123,13 +86,13 @@ local function open_stack_trace_from_buffer()
 
   local handlers = {}
 
-  ---@param node TestNode
+  ---@param node easy-dotnet.test.runner.Node
   require("easy-dotnet.test-runner.render").traverse(nil, function(node)
     if (node.type == "test" or node.type == "subcase") and compare_paths(node.file_path, curr_file) then table.insert(handlers, node) end
   end)
 
   -- In case of multiple tests on the same line (e.g. [TheoryData]), show the first one with a stack trace
-  ---@type TestNode
+  ---@type easy-dotnet.test.runner.Node
   for _, node in ipairs(handlers) do
     if node.expand then
       local window = require("easy-dotnet.test-runner.window")
@@ -144,8 +107,11 @@ function M.add_gutter_test_signs()
   local is_test_file = false
   local bufnr = vim.api.nvim_get_current_buf()
   local curr_file = vim.api.nvim_buf_get_name(bufnr)
+  local requires_rebuild = get_buf_mtime() ~= get_mtime(curr_file)
 
-  ---@param node TestNode
+  local handlers = {}
+
+  ---@param node easy-dotnet.test.runner.Node
   require("easy-dotnet.test-runner.render").traverse(nil, function(node)
     if (node.type == "test" or node.type == "test_group") and compare_paths(node.file_path, curr_file) then
       is_test_file = true
@@ -208,7 +174,7 @@ function M.add_gutter_test_signs()
   end
 end
 
----@class EasyDotnetTestResult
+---@class easy-dotnet.test.signs.Result
 ---@field passed integer Number of passed tests
 ---@field failed integer Number of failed tests
 ---@field skipped integer Number of skipped tests
@@ -227,7 +193,7 @@ M.get_test_results = function(file_path, line_number)
   local options = require("easy-dotnet.test-runner.render").options
   local res = { passed = 0, failed = 0, skipped = 0, running = 0 }
 
-  ---@param node TestNode
+  ---@param node easy-dotnet.test.runner.Node
   require("easy-dotnet.test-runner.render").traverse(nil, function(node)
     if (node.type == "test" or node.type == "test_group") and compare_paths(node.file_path, file_path) and line_number == node.line_number then
       if node.icon then

@@ -5,25 +5,25 @@ local sln_parse = require("easy-dotnet.parsers.sln-parse")
 local logger = require("easy-dotnet.logger")
 local qf_list = require("easy-dotnet.build-output.qf-list")
 
----@class TestRunnerModule
----@field client DotnetClient
+---@class easy-dotnet.test.runner.Module
+---@field client easy-dotnet.Client
 
----@type TestRunnerModule
+---@type easy-dotnet.test.runner.Module
 local M = {
   client = require("easy-dotnet.rpc.rpc").global_rpc_client,
 }
 
----@class BuildJob
+---@class easy-dotnet.test.runner.BuildJob
 ---@field state "pending" | "success" | "error"
 ---@field name "build"
 
----@class DiscoverJob
+---@class easy-dotnet.test.runner.DiscoverJob
 ---@field state "pending" | "success" | "error"
 ---@field name "discover"
 
----@class TestNode
+---@class easy-dotnet.test.runner.Node
 ---@field id string
----@field job BuildJob | DiscoverJob | nil
+---@field job easy-dotnet.test.runner.BuildJob | easy-dotnet.test.runner.DiscoverJob | nil
 ---@field name string
 ---@field displayName string
 ---@field namespace string
@@ -42,14 +42,14 @@ local M = {
 ---@field framework string
 ---@field is_MTP boolean
 ---@field refresh function | nil
----@field children table<string, TestNode>
+---@field children table<string, easy-dotnet.test.runner.Node>
 
----@class Highlight
+---@class easy-dotnet.test.runner.Highlight
 ---@field group string
 ---@field column_start number | nil
 ---@field column_end number | nil
 
----@class Test
+---@class easy-dotnet.test.runner.Test
 ---@field id string
 ---@field display_name string
 ---@field solution_file_path string
@@ -123,7 +123,7 @@ local function flatten_namespaces(node)
   end
 end
 
----@param root TestNode Treenode
+---@param root easy-dotnet.test.runner.Node Treenode
 ---@param path string E.X neovimdebugproject.test.helpers
 ---@param has_arguments boolean does the test class use classdata,inlinedata etc. Add_ShouldReturnSum(a: -1, b: 1, expected: 0) == true
 ---@param test Test The test the path was referenced from, used for getting stuff like csproject path and sln path
@@ -166,8 +166,8 @@ end
 
 ---@param tests Test[]
 ---@param options TestRunnerOptions
----@param project TestNode
----@return TestNode
+---@param project easy-dotnet.test.runner.Node
+---@return easy-dotnet.test.runner.Node
 local function generate_tree(tests, options, project)
   local offset_indent = 2
   project.children = project.children or {}
@@ -212,11 +212,11 @@ local function generate_tree(tests, options, project)
   return project
 end
 
----@param dotnet_project DotnetProject
+---@param dotnet_project easy-dotnet.project.Project
 ---@param solution_file_path string
 ---@param options table
 ---@param refresh function | nil
----@return TestNode
+---@return easy-dotnet.test.runner.Node
 local function create_test_node_from_dotnet_project(dotnet_project, solution_file_path, options, refresh)
   return {
     id = "",
@@ -251,7 +251,7 @@ local function register_rpc_discovered_tests(tests, project, options)
 
   ---@type Test[]
   local converted = vim.tbl_map(
-    ---@param discovered_test RPC_DiscoveredTest
+    ---@param discovered_test easy-dotnet.test.DiscoveredTest
     function(discovered_test)
       ---@type Test
       return {
@@ -280,7 +280,7 @@ local function register_rpc_discovered_tests(tests, project, options)
   win.refreshTree()
 end
 
----@param project_node TestNode
+---@param project_node easy-dotnet.test.runner.Node
 ---@param options table
 local function handle_rpc_response(project_node, options)
   return function(tests)
@@ -291,7 +291,7 @@ local function handle_rpc_response(project_node, options)
   end
 end
 
----@param project DotnetProject
+---@param project easy-dotnet.project.Project
 ---@param options table
 ---@param solution_file_path string
 local function start_test_discovery(project, options, solution_file_path)
@@ -312,7 +312,7 @@ local function refresh_runner(options, solution_file_path)
     return
   end
 
-  ---@type TestNode
+  ---@type easy-dotnet.test.runner.Node
   win.tree = {
     id = "",
     solution_file_path = solution_file_path,

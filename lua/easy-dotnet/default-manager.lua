@@ -1,23 +1,23 @@
 local polyfills = require("easy-dotnet.polyfills")
----@class DefaultProfile
+---@class easy-dotnet.defaults.Profile
 ---@field project string
 ---@field profile string
 
----@class SolutionContent
+---@class easy-dotnet.solution.Content
 ---@field default_build_project string
 ---@field default_test_project string
 ---@field default_run_project string
 ---@field default_debug_project string
 ---@field default_profile DefaultProfile
 
----@class PersistedDefinition
+---@class easy-dotnet.defaults.PersistedDefinition
 ---@field type 'solution' | 'project'
 ---@field project string
 ---@field target_framework string | nil
 
 local M = {}
 
----@alias TaskType "build" | "test" | "run" | "launch-profile" | "view" | "watch" | "debug"
+---@alias easy-dotnet.defaults.TaskType "build" | "test" | "run" | "launch-profile" | "view" | "watch" | "debug"
 
 ---Gets the property name for the given type.
 ---@param type TaskType
@@ -92,10 +92,10 @@ local function backwards_compatible(project)
   return project
 end
 
----@class DefaultProject
+---@class easy-dotnet.defaults.Project
 ---@field type '"solution"' | '"project"'
 ---@field path string
----@field project? DotnetProject
+---@field project? easy-dotnet.project.Project
 
 ---Checks for the default project in the solution file.
 ---@param solution_file_path string Path to the solution file.
@@ -153,7 +153,7 @@ M.check_default_project = function(solution_file_path, type)
   end
 end
 
----@param project DotnetProject The project to set as default.
+---@param project easy-dotnet.project.Project The project to set as default.
 ---@return PersistedDefinition
 local function project_to_persist(project)
   if project.name:lower() == "solution" then
@@ -172,7 +172,7 @@ local function project_to_persist(project)
 end
 
 ---Sets the default project in the solution file.
----@param project DotnetProject The project to set as default.
+---@param project easy-dotnet.project.Project The project to set as default.
 ---@param solution_file_path string Path to the solution file.
 ---@param type TaskType
 M.set_default_project = function(project, solution_file_path, type)
@@ -185,7 +185,7 @@ M.set_default_project = function(project, solution_file_path, type)
   file_utils.overwrite_file(file.file, vim.fn.json_encode(file.decoded))
 end
 
----@param project DotnetProject
+---@param project easy-dotnet.project.Project
 ---@param solution_file_path string
 ---@param profile string
 M.set_default_launch_profile = function(project, solution_file_path, profile)
@@ -205,7 +205,7 @@ M.set_default_launch_profile = function(project, solution_file_path, profile)
 end
 
 ---@param solution_file_path string
----@param project DotnetProject
+---@param project easy-dotnet.project.Project
 ---@return DefaultProfile | nil
 M.get_default_launch_profile = function(solution_file_path, project)
   local file = get_or_create_cache_file(solution_file_path)

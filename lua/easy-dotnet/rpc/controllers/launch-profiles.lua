@@ -1,24 +1,24 @@
----@class LaunchProfilesClient
----@field _client StreamJsonRpc
----@field get_launch_profiles fun(self: LaunchProfilesClient, target_path: string, cb?: fun(res: LaunchProfileResponse[]), opts?: RPC_CallOpts): RPC_CallHandle # Request msbuild
+---@class easy-dotnet.launch.Client
+---@field _client easy-dotnet.rpc.Client
+---@field get_launch_profiles fun(self: easy-dotnet.launch.Client, target_path: string, cb?: fun(res: easy-dotnet.launch.ProfileResponse[]), opts?: easy-dotnet.rpc.GenericCallOptions): easy-dotnet.rpc.CallHandle # Request msbuild
 
 local M = {}
 M.__index = M
 
 --- Constructor
----@param client StreamJsonRpc
----@return LaunchProfilesClient
+---@param client easy-dotnet.rpc.Client
+---@return easy-dotnet.launch.Client
 function M.new(client)
   local self = setmetatable({}, M)
   self._client = client
   return self
 end
 
----@class LaunchProfileResponse
+---@class easy-dotnet.launch.ProfileResponse
 ---@field name string
----@field value LaunchProfile
+---@field value easy-dotnet.launch.Profile
 
----@class LaunchProfile
+---@class easy-dotnet.launch.Profile
 ---@field commandName? string
 ---@field dotnetRunMessages? boolean
 ---@field launchBrowser? boolean

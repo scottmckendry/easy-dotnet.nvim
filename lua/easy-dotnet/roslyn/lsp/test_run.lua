@@ -1,16 +1,16 @@
----@class RangePosition
+---@class easy-dotnet.roslyn.lsp.RangePosition
 ---@field line number
 ---@field character number
 
----@class TextDocument
+---@class easy-dotnet.roslyn.lsp.TextDocument
 ---@field uri string
 
----@class TestArgument
+---@class easy-dotnet.roslyn.lsp.TestArgument
 ---@field attachDebugger boolean
 ---@field range { start: RangePosition, ["end"]: RangePosition }
 ---@field textDocument TextDocument
 
----@class TestCommand
+---@class easy-dotnet.roslyn.lsp.TestCommand
 ---@field arguments TestArgument[]
 ---@field command string
 ---@field title string

@@ -3,7 +3,7 @@ local polyfills = require("easy-dotnet.polyfills")
 local client = require("easy-dotnet.rpc.rpc").global_rpc_client
 local logger = require("easy-dotnet.logger")
 
----@class ProjectWindow
+---@class easy-dotnet.project.view.Window
 ---@field jobs table
 ---@field appendJob table
 ---@field buf integer | nil
@@ -38,7 +38,7 @@ M.keymap = {
   ["q"] = function() M.hide() end,
 }
 
----@param project DotnetProject
+---@param project easy-dotnet.project.Project
 local function discover_project_references(project)
   local finished = M.append_job("Discovering project references")
 
@@ -67,7 +67,7 @@ local function dotnet_restore(project, cb)
   end)
 end
 
----@param project DotnetProject
+---@param project easy-dotnet.project.Project
 local function discover_package_references(project)
   local finished = M.append_job("Discovering package references")
 
@@ -76,7 +76,7 @@ local function discover_package_references(project)
       if #res == 0 then
         M.package_refs = nil
       else
-        ---@param value PackageReference
+        ---@param value easy-dotnet.msbuild.PackageReference
         local package_refs = vim.tbl_map(function(value) return string.format("%s@%s", value.id, value.resolvedVersion) end, res)
         M.package_refs = package_refs
       end
@@ -421,7 +421,7 @@ local function window_destroy()
   M.win = nil
 end
 
----@param project DotnetProject
+---@param project easy-dotnet.project.Project
 ---@param sln_path string | nil
 M.render = function(project, sln_path)
   window_destroy()

@@ -62,7 +62,7 @@ end
 function M.remove_project_from_solution(slnpath)
   client:initialize(function()
     client:solution_list_projects(slnpath, function(res)
-      ---@param i SolutionFileProjectResponse
+      ---@param i easy-dotnet.solution.ProjectResponse
       local projects = vim.tbl_map(function(i)
         local exists = vim.fn.filereadable(i.absolutePath) == 1
         return {
@@ -111,16 +111,16 @@ function M.remove_project_from_solution(slnpath)
   end)
 end
 
----Parses a .sln file and returns a flattened list of DotnetProject objects,
+---Parses a .sln file and returns a flattened list of easy-dotnet.project.Project objects,
 ---where each project is duplicated per target framework it supports.
 ---
----Each returned DotnetProject will have properties like `version` and `msbuild_props.targetFramework`
+---Each returned easy-dotnet.project.Project will have properties like `version` and `msbuild_props.targetFramework`
 ---updated to reflect that specific target framework. This is useful when you want to iterate
 ---over each project-framework combination individually.
 ---
 ---@param solution_file_path string: The path to the .sln solution file.
----@param filter_fn? fun(project: DotnetProject): boolean Optional predicate to filter projects.
----@return DotnetProject[]: A list of DotnetProject objects, duplicated and updated for each target framework.
+---@param filter_fn? fun(project: easy-dotnet.project.Project): boolean Optional predicate to filter projects.
+---@return easy-dotnet.project.Project[]: A list of easy-dotnet.project.Project objects, duplicated and updated for each target framework.
 M.get_projects_and_frameworks_flattened_from_sln = function(solution_file_path, filter_fn)
   local projects = M.get_projects_from_sln(solution_file_path, filter_fn)
   local project_frameworks = {}
@@ -138,7 +138,7 @@ M.get_projects_and_frameworks_flattened_from_sln = function(solution_file_path, 
 end
 
 ---@param project_paths string[]
----@return DotnetProject[]
+---@return easy-dotnet.project.Project[]
 local function get_all_projects_from_paths(project_paths)
   return polyfills.tbl_map(function(proj_path)
     local csproj_parser = require("easy-dotnet.parsers.csproj-parse")
@@ -166,12 +166,12 @@ local function preload_msbuild_async_or_sync(project_lines)
   if co and remaining > 0 then coroutine.yield() end
 end
 
----Parses a .sln file and returns a list of DotnetProject objects.
+---Parses a .sln file and returns a list of easy-dotnet.project.Project objects.
 ---If a callback is provided, only projects for which the callback returns true will be included.
 ---
 ---@param solution_file_path string: The path to the .sln solution file.
----@param filter_fn? fun(project: DotnetProject): boolean Optional predicate to filter projects.
----@return DotnetProject[]: A list of DotnetProject objects from the solution, optionally filtered.
+---@param filter_fn? fun(project: easy-dotnet.project.Project): boolean Optional predicate to filter projects.
+---@return easy-dotnet.project.Project[]: A list of easy-dotnet.project.Project objects from the solution, optionally filtered.
 function M.get_projects_from_sln_async(solution_file_path, filter_fn)
   ---@type string[]
   local project_lines = cache.get(solution_file_path, function()
@@ -195,12 +195,12 @@ function M.get_projects_from_sln_async(solution_file_path, filter_fn)
   return projects
 end
 
----Parses a .sln file and returns a list of DotnetProject objects.
+---Parses a .sln file and returns a list of easy-dotnet.project.Project objects.
 ---If a callback is provided, only projects for which the callback returns true will be included.
 ---
 ---@param solution_file_path string: The path to the .sln solution file.
----@param filter_fn? fun(project: DotnetProject): boolean Optional predicate to filter projects.
----@return DotnetProject[]: A list of DotnetProject objects from the solution, optionally filtered.
+---@param filter_fn? fun(project: easy-dotnet.project.Project): boolean Optional predicate to filter projects.
+---@return easy-dotnet.project.Project[]: A list of easy-dotnet.project.Project objects from the solution, optionally filtered.
 function M.get_projects_from_sln(solution_file_path, filter_fn)
   local co = coroutine.running()
   ---@type string[]

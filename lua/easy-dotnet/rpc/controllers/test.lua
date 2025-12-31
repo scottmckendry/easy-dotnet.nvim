@@ -1,22 +1,22 @@
----@class TestClient
----@field _client StreamJsonRpc
----@field test_run fun(self: TestClient, request: RPC_TestRunRequest, cb?: fun(res: RPC_TestRunResult), opts?: RPCCallOpts): RPC_CallHandle # Request running multiple tests for MTP
----@field test_discover fun(self: TestClient, request: RPC_TestDiscoverRequest, cb?: fun(res: RPC_DiscoveredTest[]), opts?: RPCCallOpts): RPC_CallHandle # Request test discovery for MTP
----@field set_run_settings fun(self: TestClient)
+---@class easy-dotnet.test.Client
+---@field _client easy-dotnet.rpc.Client
+---@field test_run fun(self: easy-dotnet.test.Client, request: easy-dotnet.test.RunRequest, cb?: fun(res: easy-dotnet.test.RunResult), opts?: easy-dotnet.rpc.GenericCallOptions): easy-dotnet.rpc.CallHandle # Request running multiple tests for MTP
+---@field test_discover fun(self: easy-dotnet.test.Client, request: easy-dotnet.test.DiscoverRequest, cb?: fun(res: easy-dotnet.test.DiscoveredTest[]), opts?: easy-dotnet.rpc.GenericCallOptions): easy-dotnet.rpc.CallHandle # Request test discovery for MTP
+---@field set_run_settings fun(self: easy-dotnet.test.Client)
 
 local M = {}
 M.__index = M
 
 --- Constructor
----@param client StreamJsonRpc
----@return TestClient
+---@param client easy-dotnet.rpc.Client
+---@return easy-dotnet.test.Client
 function M.new(client)
   local self = setmetatable({}, M)
   self._client = client
   return self
 end
 
----@class RPC_DiscoveredTest
+---@class easy-dotnet.test.DiscoveredTest
 ---@field id string
 ---@field namespace? string
 ---@field name string
@@ -24,7 +24,7 @@ end
 ---@field filePath string
 ---@field lineNumber? integer
 
----@class RPC_TestDiscoverRequest
+---@class easy-dotnet.test.DiscoverRequest
 ---@field projectPath string
 ---@field targetFrameworkMoniker string
 ---@field configuration string
@@ -43,21 +43,21 @@ function M:test_discover(request, cb, opts)
   })()
 end
 
----@class RunRequestNode
+---@class easy-dotnet.test.RunRequestNode
 ---@field uid string Unique test run identifier
 ---@field displayName string Human-readable name for the run
 
----@class RPC_TestRunRequest
+---@class easy-dotnet.test.RunRequest
 ---@field projectPath string
 ---@field targetFrameworkMoniker string
 ---@field configuration string
----@field filter? table<RunRequestNode>
+---@field filter? table<easy-dotnet.test.RunRequestNode>
 
---- @class RPC_TestRunResult
+--- @class easy-dotnet.test.RunResult
 --- @field id string
 --- @field stackTrace string[] | nil
 --- @field message string[] | nil
---- @field outcome TestResult
+--- @field outcome easy-dotnet.test.runner.Result
 --- @field stdOut string[] | nil
 
 function M:test_run(request, cb, opts)
@@ -68,7 +68,7 @@ function M:test_run(request, cb, opts)
     job = nil,
     method = "test/run",
     params = request,
-    ---@param res RPC_TestRunResult[]
+    ---@param res easy-dotnet.test.RunResult[]
     cb = function(res)
       local stackTrace_pending = #res
       local stdOut_pending = #res

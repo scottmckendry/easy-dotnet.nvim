@@ -1,14 +1,14 @@
----@class TrackedJob
+---@class easy-dotnet.rpc.TrackedJob
 ---@field jobId string
----@field command RunCommand
+---@field command easy-dotnet.rpc.RunCommand
 
----@class RunCommand
+---@class easy-dotnet.rpc.RunCommand
 ---@field executable string The executable to run (e.g., "dotnet")
 ---@field arguments string[] List of command-line arguments
 ---@field workingDirectory string Working directory for the command
 ---@field environmentVariables table<string, string> Environment variables to set
 
----@param params TrackedJob
+---@param params easy-dotnet.rpc.TrackedJob
 return function(params, response, throw, validate)
   local job_id_ok, job_id_err = validate({ jobId = "string" }, params)
   if not job_id_ok then

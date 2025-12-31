@@ -1,4 +1,4 @@
----@class ValueConverter
+---@class easy-dotnet.debugger.ValueConverter
 ---@field extract fun(stack_frame_id: integer, vars: Variable[], var_path: string, var_type: string, cb: fun(result: table, pretty_string: string, highlight?: string))
 ---@field satisfies_type fun(var_type: string, vars: Variable[]): boolean
 
